@@ -1,0 +1,16 @@
+---
+
+- name: Cisco show version primjer
+  hosts: routers
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: pokreni cisco komandu show version na ruterima
+      ios_command: 
+        commands: show version | incl Version
+      register: output
+
+    - name: print output
+      debug:
+        var: output.stdout_lines

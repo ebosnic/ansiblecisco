@@ -1,0 +1,16 @@
+---
+
+- name: Cisco show running configuration primjer
+  hosts: routers
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: pokreni cisco komandu show running configuration na ruterima
+      ios_command: 
+        commands: show run 
+      register: output
+
+    - name: print output
+      debug:
+        var: output.stdout_lines

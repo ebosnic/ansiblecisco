@@ -1,0 +1,2 @@
+[switches]
+c2905-sw-01 ansible_host=192.168.10.3 inventory_host=c2905-sw-01 ansible_network_os=ios

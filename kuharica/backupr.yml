@@ -1,0 +1,43 @@
+---
+
+- name: Cisco show version primjer
+  hosts: routers
+  gather_facts: true
+  connection: network_cli
+
+  tasks:
+    - name: Dohvati timestamp sa lokalnog servera
+      shell: "date +%Y-%m-%d%H-%M-%S"
+      register: tstamp
+
+    - name: Dohvati timestamp sa lokalnog servera, ukljucujuci prvih 5 cifri nanosekunde
+      shell: "date +%Y-%m-%d%H-%M-%S.%5N"
+      register: tstamp_ns
+
+    - name: Set variables
+      set_fact:
+       cur_date: "{{ tstamp.stdout[0:10]}}"
+       cur_time: "{{ tstamp.stdout[10:]}}"
+       cur_time_ns: "{{ tstamp_ns.stdout[10:]}}"
+
+    - name: System timestamp - date
+      debug:
+       msg:  "Current date: {{ cur_date }}"
+
+    - name: System timestamp - time
+      debug:
+       msg:  "Current date: {{ cur_time }}"
+
+    - name: pokreni cisco komandu show run na ruterima
+      ios_command: 
+        commands: show run 
+      register: output
+
+    - name: isprintaj output komande show run sa routera 
+      debug:
+        var: output.stdout_lines
+
+    - name: sacuvaj configuraciju u siguronosnekopije
+      copy:
+        content: "{{ output.stdout[0] }}"
+        dest: "/etc/ansible/siguronosnekopije/routers/r_cfg_{{ inventory_host }}-{{ cur_date }}-{{ cur_time }}"
